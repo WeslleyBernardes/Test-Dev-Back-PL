@@ -1,0 +1,6 @@
+**/storagedb/**
+app/node_modules/**
+app/.prettierrc
+app/.eslintrc.js
+app/package-lock.json
+.env
