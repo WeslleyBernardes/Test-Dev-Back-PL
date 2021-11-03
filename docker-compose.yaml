@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+    app:
+      build: docker/node
+      entrypoint: dockerize -wait tcp://db:5432 -timeout 40s /home/docker/node/entrypoint.sh
+      container_name: api-pets
+      tty: true
+      ports:
+        - 3000:3000
+      volumes:
+        - ./app:/home/node/app
+        - ./docker/node/entrypoint.sh:/home/docker/node/entrypoint.sh
+      depends_on: 
+        - db
+    db:
+      build: docker/postgres
+      container_name: db-pets
+      restart: always
+      tty: true
+      environment:
+        - POSTGRES_PASSWORD=root
+        - POSTGRES_DB=store
+      ports:
+        - "5432:5432"
+      volumes:
+        - ./storagedb/postgres/dbdata:/var/lib/postgresql/data
+    pgadmin:
+      image: dpage/pgadmin4
+      container_name: pgadmin
+      tty: true
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+        - PGADMIN_DEFAULT_PASSWORD=admin
+      ports:
+        - "8000:80"
+      depends_on:
+        - db
